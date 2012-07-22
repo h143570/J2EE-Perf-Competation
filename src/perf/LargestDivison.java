@@ -172,4 +172,18 @@ public class LargestDivison {
         }
         return 1;
     }
+
+    //    private static final long doWorkInternallyRemainder5(final long n, final long sqrt) {
+    //        for (long i = 0; i <= sqrt; i += increment) {
+    //
+    //            long m;
+    //            for (long l : primeTillIncrement) {
+    //                m = i + l;
+    //                if ((n % m == 0)) {
+    //                    return n / m;
+    //                }
+    //            }
+    //        }
+    //        return 1;
+    //    }
 }
