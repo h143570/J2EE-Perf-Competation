@@ -15,11 +15,11 @@ public class LargestDivison {
     private static long[]                      preGenCache;
     private static ConcurrentMap<String, Long> cache                                = new ConcurrentHashMap<String, Long>(CACHE_SIZE + 50, 1, 100);
     private static long                        maxElement                           = 0;
-    private static long                        maxCombinations                      = 1;
+    private static long                        increment                            = 1;
 
     private static final Long                  MINUS_ONE                            = -1L;
 
-    private static long[]                      primeSuffixes;
+    private static long[]                      primeTillIncrement;
     private static final long[]                primes                               = new long[]{2, 3, 5, 7, 11, 13};
 
     public LargestDivison() {
@@ -27,26 +27,33 @@ public class LargestDivison {
 
         if (preGenCache == null) {
 
+            /**
+             * Initializes the class to use with (X*N + I) where I < X algorithm, where X is the product of primes
+             */
+
+            //calculate the value of X
             for (long prim : primes) {
-                maxCombinations *= prim;
+                increment *= prim;
             }
 
-            List<Long> nonDivisable = new ArrayList<Long>();
-            cont: for (long l = 1; l < maxCombinations; l++) {
+            //calculate the possible values of I
+            List<Long> primesTillIncrementList = new ArrayList<Long>();
+            cont: for (long l = 1; l < increment; l++) {
                 for (long prime : primes) {
                     if (l % prime == 0) {
                         continue cont;
                     }
                 }
-                nonDivisable.add(l);
+                primesTillIncrementList.add(l);
             }
-            System.out.println(maxCombinations);
-            System.out.println(nonDivisable.size());
-            System.out.println((double) maxCombinations / (double) nonDivisable.size());
+            System.out.println(increment);
+            System.out.println(primesTillIncrementList.size());
+            System.out.println((double) increment / (double) primesTillIncrementList.size());
 
-            primeSuffixes = new long[nonDivisable.size() - 1];
-            for (int i = 1; i < nonDivisable.size(); i++) {
-                primeSuffixes[i - 1] = nonDivisable.get(i);
+            //convert List<Long> to long[]
+            primeTillIncrement = new long[primesTillIncrementList.size() - 1];
+            for (int i = 1; i < primesTillIncrementList.size(); i++) {
+                primeTillIncrement[i - 1] = primesTillIncrementList.get(i);
             }
 
             preGenCache = new long[MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS];
@@ -54,6 +61,7 @@ public class LargestDivison {
             int i = 0;
             long numb = primes[primes.length - 1] + 2;
 
+            //populate cache with primes excluding the initial ones
             while (i < MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS) {
 
                 if (doWorkForPreGenCache(numb, (long) Math.sqrt(numb)) == 0) {
@@ -68,8 +76,12 @@ public class LargestDivison {
             }
             long maxElement = preGenCache[MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS - 1];
             System.out.println(maxElement);
-
-            maxElement = (maxElement / maxCombinations) * maxCombinations;
+            /**
+             * Determine the starting element (increment * N), based on the highest element in the pregen cache.
+             * Taking advantage of rounding in case of non floating point numbers.
+             *
+             */
+            maxElement = (maxElement / increment) * increment;
 
         }
     }
@@ -82,7 +94,6 @@ public class LargestDivison {
      * @param number to get the real largest divisions.
      * @return the real largest divisions, 1 if number is a prime. -1 in case of error.
      */
-
     public long getLargestDivison(String number) {
         Long result = cache.get(number);
         if (result == null) {
@@ -149,13 +160,10 @@ public class LargestDivison {
     }
 
     private static final long doWorkInternallyRemainder4(final long n, final long sqrt) {
-        for (long i = maxElement; i <= sqrt; i += maxCombinations) {
+        for (long i = maxElement; i <= sqrt; i += increment) {
 
-            long m = i + 1;
-            if ((i > 0) && (n % m == 0)) {
-                return n / m;
-            }
-            for (long l : primeSuffixes) {
+            long m;
+            for (long l : primeTillIncrement) {
                 m = i + l;
                 if ((n % m == 0)) {
                     return n / m;
