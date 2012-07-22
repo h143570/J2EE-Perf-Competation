@@ -14,7 +14,7 @@ public class LargestDivison {
 
     private static long[]                      preGenCache;
     private static ConcurrentMap<String, Long> cache                                = new ConcurrentHashMap<String, Long>(CACHE_SIZE + 50, 1, 100);
-    private static long                        maxElements                          = 0;
+    private static long                        maxElement                           = 0;
     private static long                        maxCombinations                      = 1;
 
     private static final Long                  MINUS_ONE                            = -1L;
@@ -33,8 +33,8 @@ public class LargestDivison {
 
             List<Long> nonDivisable = new ArrayList<Long>();
             cont: for (long l = 1; l < maxCombinations; l++) {
-                for (long prim : primes) {
-                    if (l % prim == 0) {
+                for (long prime : primes) {
+                    if (l % prime == 0) {
                         continue cont;
                     }
                 }
@@ -51,32 +51,25 @@ public class LargestDivison {
 
             preGenCache = new long[MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS];
 
-            preGenCache[0] = 11;
-            int i = 1;
-            long numb = 13;
+            int i = 0;
+            long numb = primes[primes.length - 1] + 2;
 
-            genconn: while (i < MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS) {
+            while (i < MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS) {
 
-                for (long prim : primes) {
-                    if (numb % prim == 0) {
-                        numb += 2;
-                        continue genconn;
-                    }
-                }
-
-                if (doWorkInternallyRemainder4(numb, (long) Math.sqrt(numb)) == 1) {
-                    preGenCache[i] = numb;
-                    i++;
+                if (doWorkForPreGenCache(numb, (long) Math.sqrt(numb)) == 0) {
                     if (i % 10000 == 0) {
                         System.out.println(i);
                     }
+                    preGenCache[i] = numb;
+                    i++;
                 }
                 numb += 2;
+
             }
             long maxElement = preGenCache[MAX_NUMBER_OF_PRE_GEN_CACHE_ELEMENTS - 1];
             System.out.println(maxElement);
 
-            maxElements = (maxElement / maxCombinations) * maxCombinations;
+            maxElement = (maxElement / maxCombinations) * maxCombinations;
 
         }
     }
@@ -137,6 +130,15 @@ public class LargestDivison {
         cache.put(number, result);
     }
 
+    private static final long doWorkForPreGenCache(final long n, final long sqrt) {
+        for (long i = 3; i <= sqrt; i += 2) {
+            if (n % i == 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     private static final long doWorkInternallyFast(final long n) {
         for (long j : preGenCache) {
             if (n % j == 0) {
@@ -147,7 +149,7 @@ public class LargestDivison {
     }
 
     private static final long doWorkInternallyRemainder4(final long n, final long sqrt) {
-        for (long i = maxElements; i <= sqrt; i += maxCombinations) {
+        for (long i = maxElement; i <= sqrt; i += maxCombinations) {
 
             long m = i + 1;
             if ((i > 0) && (n % m == 0)) {
