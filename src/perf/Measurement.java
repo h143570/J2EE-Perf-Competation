@@ -37,7 +37,7 @@ public class Measurement {
 
             System.out.println("Test initializing started.");
             time = System.currentTimeMillis();
-            initTest("perf.LargestDivison");
+            initTest();
             time = System.currentTimeMillis() - time;
             System.out.println("Test initializing finished: " + time + " ms");
 
@@ -80,7 +80,7 @@ public class Measurement {
         }
     }
 
-    private static void initTest(String clazz) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    private static void initTest() {
         for (int i = 0; i < THREAD_COUNT; ++i) {
             TASKS.add(new Task(TEST_DATA.get(i)));
         }
