@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Measurement {
 
     private final static String FILENAME = "finaltestdata1M.csv";
-    //    private final static String FILENAME = "testdata.csv";
+//        private final static String FILENAME = "testdata.csv";
     private final static int THREAD_COUNT = 100;
     private final static List<Task> TASKS = new ArrayList<>(THREAD_COUNT);
     private final static ExecutorService THREAD_EXECUTOR = Executors.newFixedThreadPool(THREAD_COUNT);
@@ -24,8 +24,8 @@ public class Measurement {
 
     static {
         for (int i = 0; i < THREAD_COUNT; ++i) {
-            TEST_DATA.add(new LinkedList<>());
-            GOOD_DATA.add(new LinkedList<>());
+            TEST_DATA.add(new ArrayList<>());
+            GOOD_DATA.add(new ArrayList<>());
         }
     }
 
